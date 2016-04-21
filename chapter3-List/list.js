@@ -7,7 +7,9 @@
  *  getElement()  return element at current position
  *  insert()      insert new element after existing element
  *  append()      adds new element to the end of the list
- *  remove()      remove element from list
+ *  remove()      remove current element, and point to prev one or point
+ *                to the new first item or point to null when is empty.
+ *                return the removed element.
  *  front()       set position to the first element of the list
  *  end()         set position to the end element of the list
  *  prev()        move current position back one element
@@ -75,33 +77,71 @@ List.prototype.append = function(element) {
     this.head = this.newNode(null, null, element);
     this.tail = this.head;
     this.pos = this.head;
-    return;
+    return this.listSize;
   }
   this.tail.next = this.newNode(this.tail, null, element);
   this.tail = this.tail.next;
+  return this.listSize;
 };
 
 List.prototype.remove = function() {
+  // empty
+  if (!this.pos) {
+    return null;
+  }
+  var removed = this.pos;
+  this.listSize--;
+  // only one element
+  if (this.listSize == 0) {
+    this.clear();
+    return removed.element;
+  }
+  // remove the head element
+  if (!removed.prev) {
+    this.head = removed.next;
+    this.head.prev = null;
+    this.pos = this.head;
+    return removed.element;
+  }
+  // remove the tail element
+  if (!removed.next) {
+    this.tail = removed.prev;
+    this.tail.next = null;
+    this.pos = this.tail;
+    return removed.element;
+  }
+  
+  
+  // normal
+  removed.prev.next = removed.next;
+  removed.next.prev = removed.prev;
+  this.pos = removed.prev;
+  
+  return removed.element;
 };
 
 List.prototype.front = function() {
   this.pos = this.head;
+  return this.currPos();
 };
 
 List.prototype.end = function() {
   this.pos = this.tail;
+  return this.currPos();
 };
 
 List.prototype.prev = function() {
-  this.pos = this.pos.prev || this.pos;
+  this.pos = this.pos && (this.pos.prev || this.pos);
+  return this.currPos();
 };
 
 List.prototype.next = function() {
-  this.pos = this.pos.next || this.pos;
+  this.pos = this.pos && (this.pos.next || this.pos);
+  return this.currPos();
 };
 
 List.prototype.currPos = function() {
-  return this.pos;
+  return this.pos && this.pos.element;
 };
 
 List.prototype.moveTo = function() {

@@ -1,0 +1,9 @@
+{
+  "name": "Data-Structures-and-Algorithms",
+  "version": "0.0.1",
+  "author": "Mistkafka",
+  "dependencies": {
+    "mocha": "2.4.5",
+    "chai": "3.5.0"
+  }
+}
